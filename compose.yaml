@@ -1,0 +1,20 @@
+services:
+  presslens:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      PORT: "8000"
+      PRESSLENS_DATABASE_PATH: /app/data/demo/presslens.sqlite
+      WEB_DIST: /app/apps/web/dist
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    restart: unless-stopped

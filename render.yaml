@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: presslens
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/ready
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PRESSLENS_DATABASE_PATH
+        value: /app/data/demo/presslens.sqlite
+      - key: WEB_DIST
+        value: /app/apps/web/dist
