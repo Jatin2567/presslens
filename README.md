@@ -4,6 +4,10 @@ Newsroom and audience analytics for a data analyst portfolio. PressLens demonstr
 
 This is an independent portfolio project. All reader sessions and article records are simulated, not Economic Times data. No results represent measured business impact.
 
+**[Open the live dashboard](https://presslens-y426.onrender.com)** · [CI checks](https://github.com/Jatin2567/presslens/actions/workflows/ci.yml)
+
+Hosted on Render's free plan in Singapore. The service can take about a minute to wake after inactivity.
+
 ## Architecture
 
 Python generates and validates source CSVs, publishes a versioned SQLite snapshot, and SQL calculates metrics. A modular FastAPI service exposes read-only endpoints and serves the React/TypeScript dashboard from the same origin. This keeps metric definitions in one place and makes the demonstration reproducible.
@@ -61,4 +65,4 @@ The data pipeline is an explicit offline operation. HTTP startup never creates, 
 
 This setup includes the cleaning pipeline, SQL analytics, a working dashboard, CSV export, tests, Docker and Render configuration. Native Excel reports, a trained ML experiment, real event ingestion and managed PostgreSQL are subsequent work, not features claimed by this foundation.
 
-Deployment requires a GitHub repository and Render account. The existing ChatGPT Site stays private. A DuckDNS hostname is pending and must be checked against Render's custom-domain requirements before configuring DNS.
+The GitHub repository and Render deployment are live; see the [deployment record](docs/verification.md). The existing ChatGPT Site stays private. A DuckDNS hostname is pending and must be checked against Render's custom-domain requirements before configuring DNS.

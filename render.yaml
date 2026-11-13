@@ -3,6 +3,7 @@ services:
     name: presslens
     runtime: docker
     plan: free
+    region: singapore
     dockerfilePath: ./Dockerfile
     dockerContext: .
     healthCheckPath: /health/ready

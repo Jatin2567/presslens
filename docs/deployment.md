@@ -1,6 +1,6 @@
 # Deployment runbook
 
-The repository contains a deployment configuration; that is not evidence of a live deployment. At preparation time, a target GitHub repository, Render service/account access, and any desired custom domain still need to be selected. The existing Readership Lab Site remains private unless its owner explicitly changes its audience.
+The project is published at [Jatin2567/presslens](https://github.com/Jatin2567/presslens) and live at [presslens-y426.onrender.com](https://presslens-y426.onrender.com). [Commit `633d912`](https://github.com/Jatin2567/presslens/commit/633d9122d36d5edc84af81e6f6e6059bc1155487) passed [all three CI jobs](https://github.com/Jatin2567/presslens/actions/runs/43485320975), including the Docker build and container smoke test. Public HTTP acceptance checks passed after Render reported the deployment live. Browser interaction testing and a custom domain remain pending. The existing Readership Lab Site remains private.
 
 ## Local container
 
@@ -23,16 +23,20 @@ The multi-stage Docker build installs the locked Python runtime requirements, in
 
 ## GitHub and CI
 
-1. Create or select the intended repository and push this project's root there. Keep credentials and local `.env` files out of Git.
+1. Push future changes to [Jatin2567/presslens](https://github.com/Jatin2567/presslens), with this project at the repository root. Keep credentials and local `.env` files out of Git.
 2. Ensure the default deployment branch is `main`, or update the workflow's push branch and the selected Render branch together.
 3. Run the `CI` workflow. It checks Python/data/SQL/API tests, frontend types and tests, a production frontend build, and a container smoke test.
-4. Resolve failing checks before deployment. A workflow file does not mean CI has run; record the successful run URL when it does.
+4. Resolve failing checks before deployment and record the successful run URL for the exact commit being deployed. The verified baseline is commit `633d912` and the CI run linked above; later changes require their own passing run.
 
 The workflow uses the official [checkout](https://github.com/actions/checkout), [setup-python](https://github.com/actions/setup-python), and [setup-node](https://github.com/actions/setup-node) actions. It does not hold deployment credentials or publish a container to a registry.
 
 ## Render
 
 The [Render Blueprint specification](https://render.com/docs/blueprint-spec) supports a Docker web service, `healthCheckPath`, and `autoDeployTrigger: checksPass`. The supplied `render.yaml` uses those settings.
+
+The existing service is [`srv-dbrm1rjl550s73cs5t2g`](https://dashboard.render.com/web/srv-dbrm1rjl550s73cs5t2g), on the free plan in Singapore, connected to `main` in this repository. It was created directly through Render's CLI with the Docker and health settings below; it is not managed by a Blueprint. Do not create another service when updating this deployment. The following setup steps describe creating a new environment. Free services sleep after inactivity; see [Render's free-tier limits](https://render.com/docs/free).
+
+The live service's `autoDeployTrigger` is verified as `checksPass`: future code updates are eligible to deploy after their GitHub checks pass. Deployment-record-only commits use Render's documented `[skip render]` marker to keep the verified application release running. Changes to `render.yaml` must also be applied to this directly managed service; the file is a reproducible specification, not an active Blueprint sync.
 
 1. Connect the selected GitHub repository to Render and create a Blueprint from `render.yaml`. If this project is kept inside a larger repository, configure the appropriate root directory before creating the service; the supplied paths assume this project is the repository root.
 2. Review the service name, plan, region, deployment branch, and any pricing shown in Render before creating paid resources. The file requests the `free` plan; availability and platform restrictions must be confirmed in the account.
@@ -41,7 +45,7 @@ The [Render Blueprint specification](https://render.com/docs/blueprint-spec) sup
 5. Confirm `/health/ready` passes and the deployment reaches a healthy state. Render controls `PORT`; the container reads it.
 6. Open the actual `*.onrender.com` URL returned by Render and perform the acceptance checks below. Do not infer a URL from the requested service name.
 
-`checksPass` gates automatic deployments on repository checks. Verify the connected repository actually reports the intended CI checks, and inspect the first deployment separately. Adding the Blueprint alone does not prove the integration is connected or that a build has succeeded.
+`checksPass` gates automatic deployments on repository checks when Render uses a connected Git provider. A service linked only by public repository URL requires manual deployment. Verify the connection and inspect the first deployment separately; passing GitHub CI does not establish a live Render deployment. See [Render's deployment behavior](https://render.com/docs/deploys).
 
 ## Custom domain and DuckDNS
 
